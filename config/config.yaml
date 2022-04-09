@@ -1,0 +1,8 @@
+Port: 8080
+Database:
+  Port: 3306
+  Driver: "mysql"
+  Name: "ecommerce"
+  Address: "127.0.0.1"
+  Username: "admin"
+  Password: "admin123"
