@@ -17,6 +17,10 @@ import (
 	authhandler "ecommerce/delivery/handler/auth"
 	authrepo "ecommerce/repository/auth"
 	authusecase "ecommerce/usecase/auth"
+
+	producthandler "ecommerce/delivery/handler/product"
+	productrepository "ecommerce/repository/product"
+	productusecase "ecommerce/usecase/product"
 )
 
 func main() {
@@ -32,12 +36,16 @@ func main() {
 	authUseCase := authusecase.NewAuthUseCase(authRepo)
 	authHandler := authhandler.NewAuthHandler(authUseCase)
 
+	productRepo := productrepository.NewProductRepository(db)
+	productUseCase := productusecase.NewProductUseCase(productRepo)
+	productHandler := producthandler.NewProductHandler(productUseCase)
+
 	e := echo.New()
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middlewares.CustomLogger())
 
 	routes.RegisterAuthPath(e, authHandler)
-	routes.RegisterPath(e, userHandler)
+	routes.RegisterPath(e, userHandler, productHandler)
 	log.Fatal(e.Start(fmt.Sprintf(":%v", configs.Port)))
 
 }
