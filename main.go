@@ -21,6 +21,10 @@ import (
 	producthandler "ecommerce/delivery/handler/product"
 	productrepository "ecommerce/repository/product"
 	productusecase "ecommerce/usecase/product"
+
+	carthandler "ecommerce/delivery/handler/cartItem"
+	cartrepository "ecommerce/repository/cartItem"
+	cartusecase "ecommerce/usecase/cartItem"
 )
 
 func main() {
@@ -40,12 +44,16 @@ func main() {
 	productUseCase := productusecase.NewProductUseCase(productRepo)
 	productHandler := producthandler.NewProductHandler(productUseCase)
 
+	cartRepo := cartrepository.NewCartRepository(db)
+	cartItemUseCase := cartusecase.NewCartUseCase(cartRepo, productRepo)
+	cartHandler := carthandler.NewCartHandler(cartItemUseCase)
+
 	e := echo.New()
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middlewares.CustomLogger())
 
 	routes.RegisterAuthPath(e, authHandler)
-	routes.RegisterPath(e, userHandler, productHandler)
+	routes.RegisterPath(e, userHandler, productHandler, cartHandler)
 	log.Fatal(e.Start(fmt.Sprintf(":%v", configs.Port)))
 
 }
